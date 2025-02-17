@@ -1,6 +1,7 @@
 <template>
-  <div class="item" :class="{ selected: selected }" draggable="true" @dragstart="onDragStart" @dragend="onDragEnd" @dragover.prevent @drop="onDrop" @click="emit('selectItem', item)">
-    <img :src="item.src" alt="">
+  <div class="item" :class="{ selected: selected }" @click="emit('selectItem', item)"
+    @dragstart="emit('dragstart', item)" @dragend="emit('dragend')">
+    <img :src="item.src" alt="" />
     <div class="quantity">{{ item.quantity }}</div>
   </div>
 </template>
@@ -8,26 +9,12 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 
-const props = defineProps<{ item: any; draggedItemId: string | null; selected?: boolean }>();
+const props = defineProps<{ item: any; selected?: boolean }>();
 const emit = defineEmits<{
-  (event: 'swapItems', sourceId: string, targetId: string): void;
-  (event: 'updateDraggedItem', id: string | null): void;
-  (event: 'selectItem', id: string | null): void;
+  (event: 'selectItem', item: any): void;
+  (event: 'dragstart', item: any): void;
+  (event: 'dragend'): void;
 }>();
-
-const onDragStart = () => {
-  emit('updateDraggedItem', props.item.id);
-};
-
-const onDragEnd = () => {
-  emit('updateDraggedItem', null);
-};
-
-const onDrop = () => {
-  if (props.draggedItemId !== null && props.draggedItemId !== props.item.id) {
-    emit('swapItems', props.draggedItemId, props.item.id);
-  }
-};
 </script>
 
 <style lang="scss" scoped>
@@ -38,7 +25,6 @@ const onDrop = () => {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #4D4D4D;
   position: relative;
 
   .quantity {
@@ -53,7 +39,7 @@ const onDrop = () => {
   }
 
   &.selected {
-    box-shadow: 0 0 10px white
+    box-shadow: 0 0 10px white;
   }
 }
 </style>

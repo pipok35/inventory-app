@@ -19,6 +19,10 @@ export const useInventoryStore = defineStore('inventory', {
     items: JSON.parse(localStorage.getItem('inventory') || JSON.stringify(mockItems)) as InventoryItem[],
   }),
   actions: {
+    updateInventory(slots: InventoryItem[]) {
+      this.items = slots.filter(Boolean);
+      localStorage.setItem('inventory', JSON.stringify(this.items));
+    },
     removeItem(id: string, quantity: number): void {
       const itemIndex = this.items.findIndex(item => item.id === id);
       if (itemIndex !== -1) {
@@ -34,21 +38,5 @@ export const useInventoryStore = defineStore('inventory', {
         }
       }
     },
-
-    // Метод для обмена местами двух предметов
-    swapItems(sourceId: string, targetId: string): void {
-      const sourceIndex = this.items.findIndex(item => item.id === sourceId);
-      const targetIndex = this.items.findIndex(item => item.id === targetId);
-        if (sourceIndex !== -1 && targetIndex !== -1) {
-        // Меняем местами предметы
-        [this.items[sourceIndex], this.items[targetIndex]] = [this.items[targetIndex], this.items[sourceIndex]];
-    
-        // Принудительное обновление массива для реактивности
-        this.items = [...this.items];
-
-        // Сохраняем обновленный инвентарь
-        localStorage.setItem('inventory', JSON.stringify(this.items));
-      }
-    }
   }
 });
