@@ -16,7 +16,7 @@ const mockItems: InventoryItem[] = [
 
 export const useInventoryStore = defineStore('inventory', {
   state: () => ({
-    items: JSON.parse(localStorage.getItem('inventory')) || [...mockItems, ...Array(25 - mockItems.length).fill(null)]
+    items: JSON.parse(localStorage.getItem('inventory') || '[]') || [...mockItems, ...Array(25 - mockItems.length).fill(null)]
   }),
   actions: {
     updateInventory(slots: (InventoryItem | null)[]) {
@@ -24,7 +24,7 @@ export const useInventoryStore = defineStore('inventory', {
       localStorage.setItem('inventory', JSON.stringify(this.items));
     },
     removeItem(id: string, quantity: number): void {
-      const itemIndex = this.items.findIndex(item => item?.id === id);
+      const itemIndex = this.items.findIndex((item: InventoryItem | null) => item?.id === id);
       if (itemIndex !== -1) {
         if (this.items[itemIndex]!.quantity > quantity) {
           this.items[itemIndex]!.quantity -= quantity;
@@ -34,7 +34,7 @@ export const useInventoryStore = defineStore('inventory', {
         localStorage.setItem('inventory', JSON.stringify(this.items));
       }
 
-      if (this.items.filter(item => item !== null).length === 0) {
+      if (this.items.filter((item: InventoryItem | null) => item !== null).length === 0) {
         localStorage.removeItem('inventory');
       }
     }
