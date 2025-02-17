@@ -24,7 +24,7 @@ const emit = defineEmits(['close']);
 const store = useInventoryStore();
 
 const showDeleteInput = ref(false);
-const deleteAmount = ref(1);
+const deleteAmount = ref(props.item.quantity);
 
 const confirmDelete = () => {
   store.removeItem(props.item.id, deleteAmount.value);

@@ -16,27 +16,27 @@ const mockItems: InventoryItem[] = [
 
 export const useInventoryStore = defineStore('inventory', {
   state: () => ({
-    items: JSON.parse(localStorage.getItem('inventory') || JSON.stringify(mockItems)) as InventoryItem[],
+    items: JSON.parse(localStorage.getItem('inventory')) || [...mockItems, ...Array(25 - mockItems.length).fill(null)]
   }),
   actions: {
-    updateInventory(slots: InventoryItem[]) {
-      this.items = slots.filter(Boolean);
+    updateInventory(slots: (InventoryItem | null)[]) {
+      this.items = slots.slice(0, 25);
       localStorage.setItem('inventory', JSON.stringify(this.items));
     },
     removeItem(id: string, quantity: number): void {
-      const itemIndex = this.items.findIndex(item => item.id === id);
+      const itemIndex = this.items.findIndex(item => item?.id === id);
       if (itemIndex !== -1) {
-        if (this.items[itemIndex].quantity > quantity) {
-          this.items[itemIndex].quantity -= quantity;
+        if (this.items[itemIndex]!.quantity > quantity) {
+          this.items[itemIndex]!.quantity -= quantity;
         } else {
-          this.items.splice(itemIndex, 1);
+          this.items[itemIndex] = null; // Очищаем слот, но не сдвигаем
         }
         localStorage.setItem('inventory', JSON.stringify(this.items));
-
-        if (this.items.length === 0) {
-          localStorage.removeItem('inventory');
-        }
       }
-    },
+
+      if (this.items.filter(item => item !== null).length === 0) {
+        localStorage.removeItem('inventory');
+      }
+    }
   }
 });

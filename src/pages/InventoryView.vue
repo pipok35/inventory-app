@@ -4,7 +4,7 @@
       <InventorySidebar />
       <div class="inventory__content">
         <div class="inventory__grid">
-          <div v-for="(slot, index) in inventorySlots" :key="index" class="inventory__slot" @dragover.prevent
+          <div v-for="(slot, index) in store.items" :key="index" class="inventory__slot" @dragover.prevent
             @drop="onDrop(index)">
             <InventoryItem v-if="slot" :item="slot" :key="slot.id" @selectItem="selectItem"
               @dragstart="onDragStart(index, slot)" @dragend="onDragEnd" draggable="true" />
@@ -34,14 +34,6 @@ const selectedItem = ref(null);
 const draggedItem = ref(null);
 const draggedIndex = ref<number | null>(null);
 
-const inventorySlots = computed(() => {
-  const slots = Array(25).fill(null);
-  store.items.forEach((item, index) => {
-    const emptySlot = slots.findIndex(slot => !slot);
-    if (emptySlot !== -1) slots[emptySlot] = item;
-  });
-  return slots;
-});
 
 const selectItem = (item: any) => {
   selectedItem.value = item;
@@ -60,14 +52,10 @@ const onDragEnd = () => {
 const onDrop = (targetIndex: number) => {
   if (draggedItem.value === null || draggedIndex.value === null) return;
 
-  const targetItem = inventorySlots.value[targetIndex];
-  const currentItem = inventorySlots.value[draggedIndex.value];
+  const newSlots = [...store.items];
+  [newSlots[draggedIndex.value], newSlots[targetIndex]] =
+  [newSlots[targetIndex], newSlots[draggedIndex.value]];
 
-  const newSlots = [...inventorySlots.value];
-
-  newSlots[draggedIndex.value] = targetItem;
-  newSlots[targetIndex] = currentItem;
-  
   store.updateInventory(newSlots);
 };
 </script>
@@ -100,8 +88,8 @@ const onDrop = (targetIndex: number) => {
 
       .inventory__slot {
         position: relative;
-        width: 100%;
-        height: 100%;
+        min-width: 100px;
+        min-height: 100px;
         border: 1px solid #4D4D4D;
       }
     }
