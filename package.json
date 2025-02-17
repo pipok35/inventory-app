@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "path": "^0.12.7",
     "pinia": "^3.0.1",
+    "url": "^0.11.4",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "sass-embedded": "^1.85.0",
     "typescript": "~5.7.2",
     "vite": "^6.1.0",
     "vue-tsc": "^2.2.0"
